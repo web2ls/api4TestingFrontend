@@ -10,7 +10,8 @@
 body {
   margin: 0;
   padding: 0;
-  background: #1c2f58;
+  background: url(assets/bg.jpg) no-repeat, #1c2f58;
+  background-size: cover;
 }
 
 .container {
