@@ -1,15 +1,127 @@
 <template>
     <div class="upload-file">
-        test
+        <div class="header">Select your own data</div>
+        <div class="upload-section">
+            <label for="file">JSON file...</label>
+            <input type="file" id="file" accept=".json" v-on:change="uploadFile">
+        </div>
+        <div class="upload-information" v-if="file">
+            <div class="file-name">{{file.name}}</div>
+            <div class="file-size">{{file.size / 1000}}KB</div>
+        </div>
+        <div class="upload-error" v-if="error">
+            <span>Error on upload file to the server. Let's try again later...</span>
+        </div>
+        <div class="upload-success" v-if="successUpload">
+            <span>File has been uploaded...</span>
+        </div>
     </div>
 </template>
 
 <script>
-export default {
+import axios from 'axios';
 
+import {ENV} from '../core/env';
+
+export default {
+    data() {
+        return {
+            file: null,
+            error: false,
+            successUpload: true,
+        }
+    },
+    methods: {
+        uploadFile(event) {
+            this.error = false;
+            this.successUpload = false;
+            console.log('upload file');
+            const file = event.target.files[0];
+            this.file = file;
+            console.log(file);
+            const url = `${ENV.BACKEND_URL}/api/custom-data`;
+            const formData = new FormData();
+            formData.append('file', file);
+            axios.post(url, formData)
+            .then(res => {
+                console.log(res);
+                this.successUpload = true;
+            })
+            .catch(error => {
+                console.log(error);
+                this.error = true;
+            })
+        }
+    }
 }
 </script>
 
 <style scoped>
+    .upload-file {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50%;
+        padding: 10% 15%;
+        border: 3px solid limegreen;
+        border-radius: 5px;
+        color: #fff;
+        transition: all 0.6s;
+    }
 
+    .upload-file:hover {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid limegreen;
+        border-radius: 7px;
+    }
+
+    .header {
+        margin-bottom: 5%;
+        font-weight: 700;
+        font-size: 18px;
+    }
+
+    .upload-section {
+        margin-bottom: 5%;
+    }
+
+    input[type=file] {
+        position: absolute;
+        width: 0;
+        height: 0;
+        opacity: 0;
+    }
+
+    label {
+        padding: 1% 3%;
+        border: 3px solid limegreen;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.4s;
+    }
+
+    label:hover {
+        background: limegreen;
+    }
+
+    .upload-information {
+        display: flex;
+        justify-content: space-between;
+        font-size: 16px;
+    }
+
+    .upload-error {
+        margin-top: 40px;
+        font-size: 18px;
+        color: orangered;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .upload-success {
+        color: limegreen;
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
 </style>

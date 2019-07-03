@@ -7,11 +7,16 @@
 </template>
 
 <style>
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
   background: url(assets/bg.jpg) no-repeat, #1c2f58;
   background-size: cover;
+  font-family: 'Roboto Slab', serif;
 }
 
 .container {
@@ -25,7 +30,7 @@ body {
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Roboto Slab', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
