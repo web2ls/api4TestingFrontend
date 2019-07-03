@@ -12,6 +12,9 @@
         <div class="upload-error" v-if="error">
             <span>Error on upload file to the server. Let's try again later...</span>
         </div>
+        <div class="ext-error" v-if="wrongExt">
+            <span>Selected file has wrong extention. Please check it...</span>
+        </div>
         <div class="upload-success" v-if="successUpload">
             <span>File has been uploaded...</span>
         </div>
@@ -28,23 +31,31 @@ export default {
         return {
             file: null,
             error: false,
-            successUpload: true,
+            wrongExt: false,
+            successUpload: false,
         }
     },
     methods: {
         uploadFile(event) {
             this.error = false;
+            this.wrongExt = false;
             this.successUpload = false;
-            console.log('upload file');
             const file = event.target.files[0];
             this.file = file;
+
+            const fileName = file.name;
+            const fileExt = fileName.slice(-4);
+            if (fileExt !== 'json') {
+                this.wrongExt = true;
+                return;
+            }
+
             console.log(file);
-            const url = `${ENV.BACKEND_URL}/api/custom-data`;
+            const url = `${ENV.BACKEND_URL}/api/dynamic-data`;
             const formData = new FormData();
             formData.append('file', file);
             axios.post(url, formData)
             .then(res => {
-                console.log(res);
                 this.successUpload = true;
             })
             .catch(error => {
@@ -122,6 +133,14 @@ export default {
     .upload-success {
         color: limegreen;
         font-size: 18px;
+        letter-spacing: 1px;
+    }
+
+    .ext-error {
+        margin-top: 40px;
+        font-size: 18px;
+        color: orangered;
+        font-weight: 700;
         letter-spacing: 1px;
     }
 </style>
