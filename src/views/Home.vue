@@ -13,7 +13,7 @@
                 <div class="icon"><unicon name="cloud-download" fill="white" width="50" height="50" /></div>
                 <div class="method">GET</div>
                 <div class="description">Getting dynamic data in JSON format</div>
-                <div class="example">/api/custom-data</div>
+                <div class="example">/api/dynamic-data</div>
                 <div class="link">link not available</div>
             </div>
             <div class="api-item post-method">

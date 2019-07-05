@@ -9,6 +9,9 @@
             <div class="file-name">{{file.name}}</div>
             <div class="file-size">{{file.size / 1000}}KB</div>
         </div>
+
+        <Spinner v-if="isLoading" />
+
         <div class="upload-error" v-if="error">
             <span>Error on upload file to the server. Let's try again later...</span>
         </div>
@@ -25,11 +28,16 @@
 import axios from 'axios';
 
 import {ENV} from '../core/env';
+import Spinner from '@/views/Spinner.vue'
 
 export default {
+    components: {
+        Spinner
+    },
     data() {
         return {
             file: null,
+            isLoading: false,
             error: false,
             wrongExt: false,
             successUpload: false,
@@ -40,6 +48,7 @@ export default {
             this.error = false;
             this.wrongExt = false;
             this.successUpload = false;
+            this.isLoading = true;
             const file = event.target.files[0];
             this.file = file;
 
@@ -57,10 +66,12 @@ export default {
             axios.post(url, formData)
             .then(res => {
                 this.successUpload = true;
+                this.isLoading = false;
             })
             .catch(error => {
                 console.log(error);
                 this.error = true;
+                this.isLoading = false;
             })
         }
     }
@@ -74,7 +85,7 @@ export default {
         left: 50%;
         transform: translate(-50%, -50%);
         width: 50%;
-        padding: 10% 15%;
+        padding: 10%;
         border: 3px solid limegreen;
         border-radius: 5px;
         color: #fff;
