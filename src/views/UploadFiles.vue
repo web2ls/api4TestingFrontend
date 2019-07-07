@@ -6,23 +6,26 @@
             </router-link>
         </div>
 
-        <div class="header">Select your own data</div>
+        <div class="header">Make multiple select files for upload</div>
+
         <div class="upload-section">
-            <label for="file">JSON file...</label>
-            <input type="file" id="file" accept=".json" v-on:change="uploadFile">
+            <label for="file">Any files you want...</label>
+            <input type="file" id="file" v-on:change="uploadFiles" multiple>
         </div>
-        <div class="upload-information" v-if="file">
-            <div class="file-name">{{file.name}}</div>
-            <div class="file-size">{{file.size / 1000}}KB</div>
+
+        <div class="description">Maximum number of files: 12</div>
+
+        <div class="upload-information" v-if="files">
+            <div class="file-info-item" v-for="file of files" :key="file.name">
+                <div class="file-name">{{file.name}}</div>
+                <div class="file-size">{{file.size / 1000}}KB</div>
+            </div>
         </div>
 
         <Spinner v-if="isLoading" />
 
         <div class="upload-error" v-if="error">
             <span>Error on upload file to the server. Let's try again later...</span>
-        </div>
-        <div class="ext-error" v-if="wrongExt">
-            <span>Selected file has wrong extention. Please check it...</span>
         </div>
         <div class="upload-success" v-if="successUpload">
             <span>File has been uploaded...</span>
@@ -42,33 +45,26 @@ export default {
     },
     data() {
         return {
-            file: null,
+            files: null,
             isLoading: false,
             error: false,
-            wrongExt: false,
             successUpload: false,
         }
     },
     methods: {
-        uploadFile(event) {
+        uploadFiles(event) {
             this.error = false;
-            this.wrongExt = false;
             this.successUpload = false;
             this.isLoading = true;
-            const file = event.target.files[0];
-            this.file = file;
+            this.files = Array.from(event.target.files);
 
-            const fileName = file.name;
-            const fileExt = fileName.slice(-4);
-            if (fileExt !== 'json') {
-                this.wrongExt = true;
-                return;
-            }
-
-            console.log(file);
-            const url = `${ENV.BACKEND_URL}/api/dynamic-data`;
+            console.log(event.target.files);
+            const url = `${ENV.BACKEND_URL}/api/upload`;
             const formData = new FormData();
-            formData.append('file', file);
+            this.files.forEach(item => {
+                formData.append('files', item);
+            });
+
             axios.post(url, formData)
             .then(res => {
                 this.successUpload = true;
@@ -97,7 +93,7 @@ export default {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 50%;
+        width: 70%;
         padding: 10%;
         border: 3px solid limegreen;
         color: #fff;
@@ -116,7 +112,7 @@ export default {
     }
 
     .upload-section {
-        margin-bottom: 5%;
+        margin-bottom: 3%;
     }
 
     input[type=file] {
@@ -138,10 +134,19 @@ export default {
         background: limegreen;
     }
 
+    .description {
+        margin-bottom: 5%;
+        font-size: 12px;
+    }
+
     .upload-information {
+        font-size: 16px;
+    }
+
+    .file-info-item {
         display: flex;
         justify-content: space-between;
-        font-size: 16px;
+        margin-bottom: 1%;
     }
 
     .upload-error {

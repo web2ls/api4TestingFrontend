@@ -30,7 +30,9 @@
                 <div class="method">POST</div>
                 <div class="description">Upload any files to the server</div>
                 <div class="example">/api/upload</div>
-                <div class="link">link not available</div>
+                <div class="link">
+                    <router-link to="/upload-files">link to page</router-link>
+                </div>
             </div>
         </div>
     </div>
